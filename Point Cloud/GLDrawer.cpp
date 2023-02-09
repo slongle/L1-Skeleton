@@ -1,4 +1,5 @@
 #include "GLDrawer.h"
+#include <GL/glut.h>
 
 
 GLDrawer::GLDrawer(RichParameterSet* _para)

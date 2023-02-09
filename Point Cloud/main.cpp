@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include <QtGui/QApplication>
 #include "Console.h"
+#include <GL/glut.h>
 
 //函数入口，一般不做修改
 int main(int argc, char *argv[])
 {
+	glutInit( & argc, argv );
 	CConsoleOutput::Instance();
 	//QApplication app(argc, argv);
 	QApplication::setStyle(QStyleFactory::create("cleanlooks"));

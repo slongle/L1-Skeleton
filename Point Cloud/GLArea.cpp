@@ -1,4 +1,5 @@
 ﻿#include "GLArea.h"
+#include <GL/glut.h>
 
 GLArea::GLArea(QWidget *parent): QGLWidget(/*QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer |QGL::SampleBuffers),*/ parent),
 	               para(global_paraMgr.getGlareaParameterSet()),

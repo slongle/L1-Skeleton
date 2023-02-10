@@ -59,7 +59,7 @@ void MainWindow::initConnect()
 		cout << "can not connect signal" << endl;
 	}
 
-	connect(ui.actionImport_Ply, SIGNAL(triggered()), this, SLOT(openFile()));
+	connect(ui.actionImport_File, SIGNAL(triggered()), this, SLOT(openFile()));
 	connect(ui.actionSave_Ply, SIGNAL(triggered()), this, SLOT(saveFile()));
 	connect(ui.actionDownSample, SIGNAL(triggered()), this, SLOT(downSample()));
 	connect(ui.actionSubSample, SIGNAL(triggered()), this, SLOT(subSample()));
@@ -349,12 +349,10 @@ void MainWindow::setStop()
 
 void MainWindow::openFile()
 {
-	QString file = QFileDialog::getOpenFileName(this, "Select a ply file", "", "*.ply");
+	QString file = QFileDialog::getOpenFileName(this, "Select a ply/skel file", "", "*.ply;;*.skel");
 	if(!file.size()) return;
 
-	area->dataMgr.loadPlyToSample(file);
-	area->initAfterOpenFile();
-	area->updateGL();
+	area->openByDrop(file);
 }
 
 void MainWindow::openImage()

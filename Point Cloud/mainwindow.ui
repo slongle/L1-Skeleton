@@ -48,7 +48,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport_Ply"/>
+    <addaction name="actionImport_File"/>
     <addaction name="actionSave_Ply"/>
     <addaction name="actionSave_Skel"/>
     <addaction name="actionNormalize"/>
@@ -200,7 +200,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionImport_Ply"/>
+   <addaction name="actionImport_File"/>
    <addaction name="actionSave_Ply"/>
    <addaction name="actionSave_Skel"/>
    <addaction name="actionSnapShot"/>
@@ -236,13 +236,13 @@
    <addaction name="actionCull_Points"/>
    <addaction name="separator"/>
   </widget>
-  <action name="actionImport_Ply">
+  <action name="actionImport_File">
    <property name="icon">
     <iconset resource="mainwindow.qrc">
      <normaloff>:/mainwindow/Icons/open.png</normaloff>:/mainwindow/Icons/open.png</iconset>
    </property>
    <property name="text">
-    <string>Import Ply</string>
+       <string>Import Ply/Skel</string>
    </property>
   </action>
   <action name="actionSave_Ply">

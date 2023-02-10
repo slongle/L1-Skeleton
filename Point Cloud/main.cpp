@@ -1,24 +1,67 @@
-#include "mainwindow.h"
-#include <QtGui/QApplication>
+#include "Algorithm/Skeletonization.h"
 #include "Console.h"
-#include <GL/glut.h>
+#include "DataMgr.h"
+#include "ParameterMgr.h"
+#include "mainwindow.h"
+#include <QString>
 
-//函数入口，一般不做修改
-int main(int argc, char *argv[])
-{
-	glutInit( & argc, argv );
-	CConsoleOutput::Instance();
-	//QApplication app(argc, argv);
-	QApplication::setStyle(QStyleFactory::create("cleanlooks"));
-	/* 
-	"windows", "motif", "cde", "plastique" and "cleanlooks". Depending on the platform, "windowsxp", "windowsvista" and "macintosh" may be available.
-	Note that keys are case insensitive.
-	*/
+int main(int argc, char *argv[]) {
+  CConsoleOutput::Instance();
 
-	QApplication a(argc, argv);
-	MainWindow *mainWindow = new MainWindow(NULL);
-	mainWindow->showMaximized();
-	//mainWindow->show();
+  if (argc == 1) {
+    glutInit(&argc, argv);
+    CConsoleOutput::Instance();
+    // QApplication app(argc, argv);
+    QApplication::setStyle(QStyleFactory::create("cleanlooks"));
+    /*
+    "windows", "motif", "cde", "plastique" and "cleanlooks". Depending on the
+    platform, "windowsxp", "windowsvista" and "macintosh" may be available. Note
+    that keys are case insensitive.
+    */
 
-	return a.exec();
+    QApplication a(argc, argv);
+    MainWindow *mainWindow = new MainWindow(NULL);
+    mainWindow->showMaximized();
+    // mainWindow->show();
+
+    return a.exec();
+  } else {
+    if (argc != 3) {
+      cout << "Usage: " << argv[0] << " input.ply output.skel" << endl;
+    } else {
+      DataMgr *dataMgr = new DataMgr(global_paraMgr.getDataParameterSet());
+      dataMgr->loadPlyToOriginal(argv[1]);
+      dataMgr->downSamplesByNum(true); // do nondeterministic downsampling
+      // dataMgr->downSamplesByNum(false); // do deterministic downsampling
+      Skeletonization *skeletonization =
+          new Skeletonization(global_paraMgr.getSkeletonParameterSet());
+      skeletonization->setFirstIterate();
+      skeletonization->setInput(dataMgr);
+
+      double current_radius = global_paraMgr.skeleton.getDouble("CGrid Radius");
+      global_paraMgr.skeleton.setValue("Initial Radius",
+                                       DoubleValue(current_radius));
+
+      int MAX_SKELETON_ITERATE = 500;
+
+      for (int i = 0; i < MAX_SKELETON_ITERATE; i++) {
+        global_paraMgr.skeleton.setValue("Run Auto Wlop One Step",
+                                         BoolValue(true));
+        // adapted from runPointCloudAlgorithm
+        skeletonization->setInput(dataMgr);
+        skeletonization->run();
+        skeletonization->clear();
+        global_paraMgr.skeleton.setValue("Run Auto Wlop One Step",
+                                         BoolValue(true));
+
+        if (global_paraMgr.skeleton.getBool(
+                "The Skeletonlization Process Should Stop")) {
+          break;
+        }
+      }
+
+      dataMgr->saveSkeletonAsSkel(argv[2]);
+      cout << "Skeleton saved to " << argv[2] << endl;
+    }
+  }
 }

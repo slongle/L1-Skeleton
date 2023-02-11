@@ -1,9 +1,15 @@
+import subprocess
+import tempfile
+
 from cloudvolume import Skeleton
 import numpy as np
-
-import subprocess
+import open3d as o3d
 
 TMP_DIR = "/tmp"
+BIN_PATH = "/home/jason/projects/l1/L1-Skeleton/PointCloud/PointCloudL1"
+DEFAULT_JSON_CONFIG_PATH = (
+    "/home/jason/projects/l1/L1-Skeleton/default_skeleton_config.json"
+)
 
 
 def parse_skel(filename):
@@ -145,20 +151,43 @@ def to_cloud_volume_skeleton(parsed):
     return skel
 
 
-def volume_to_ply():
-    __import__("pdb").set_trace()
+def point_cloud_to_ply(pc, out_filename):
+    # NOTE: assumes isotropic data, properly scaled data
+    # pc: [N, 3]
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(pc)
+    o3d.io.write_point_cloud(out_filename, pcd)
+
+    return out_filename
 
 
-def point_cloud_to_ply():
-    # NOTE: assumes isotropic data
-    __import__("pdb").set_trace()
+def generate_skeleton(pc):
+    ply_path = point_cloud_to_ply(
+        pc, tempfile.NamedTemporaryFile(suffix=".ply", dir=TMP_DIR, delete=False).name
+    )
+    skel_path = tempfile.NamedTemporaryFile(
+        suffix=".skel", dir=TMP_DIR, delete=False
+    ).name
+    cmd = f"{BIN_PATH} {ply_path} {skel_path} {DEFAULT_JSON_CONFIG_PATH}"
 
+    log_file = tempfile.NamedTemporaryFile(suffix=".txt", dir=TMP_DIR, delete=False)
+    print(f"Running command: {cmd}")
+    print(f"Logging to: {log_file.name}")
 
-def generate_skeleton():
-    pass
+    # NOTE: this is a blocking call, can use subprocess.Popen to run in background
+    subprocess.run(cmd.split(), stdout=log_file, stderr=log_file)
+
+    skel = parse_skel(skel_path)
+    skeleton = to_cloud_volume_skeleton(skel)
+
+    return skeleton
 
 
 if __name__ == "__main__":
-    result = parse_skel("output.skel")
-    skel = to_cloud_volume_skeleton(result)
-    skel.viewer()
+    import nibabel as nib
+
+    vol = nib.load("RibFrac1-rib-seg.nii.gz").get_fdata()
+    # downscale
+    pc = np.argwhere(vol == 1) * 0.01
+    skeleton = generate_skeleton(pc)
+    skeleton.viewer()

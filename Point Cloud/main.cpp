@@ -26,9 +26,10 @@ int main(int argc, char *argv[]) {
 
     return a.exec();
   } else {
-    if (argc != 3) {
-      cout << "Usage: " << argv[0] << " input.ply output.skel" << endl;
+    if (argc != 4) {
+      cout << "Usage: " << argv[0] << " input.ply output.skel config.json" << endl;
     } else {
+      global_paraMgr.loadSkeletonConfigJson(argv[3]);
       DataMgr *dataMgr = new DataMgr(global_paraMgr.getDataParameterSet());
       dataMgr->loadPlyToOriginal(argv[1]);
       dataMgr->downSamplesByNum(true); // do nondeterministic downsampling
@@ -42,9 +43,9 @@ int main(int argc, char *argv[]) {
       global_paraMgr.skeleton.setValue("Initial Radius",
                                        DoubleValue(current_radius));
 
-      int MAX_SKELETON_ITERATE = 500;
+      int num_iter = global_paraMgr.skeleton.getInt("Max Num Iterations");
 
-      for (int i = 0; i < MAX_SKELETON_ITERATE; i++) {
+      for (int i = 0; i < num_iter; i++) {
         global_paraMgr.skeleton.setValue("Run Auto Wlop One Step",
                                          BoolValue(true));
         // adapted from runPointCloudAlgorithm

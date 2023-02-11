@@ -1,5 +1,8 @@
 ﻿#include "ParameterMgr.h"
 #include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 int ParameterMgr::init_time = 0;
 ParameterMgr global_paraMgr;
@@ -169,6 +172,8 @@ void ParameterMgr::initWLopParameter()
 
 void ParameterMgr::initSkeletonParameter()
 {
+  skeleton.addParam(new RichInt("Max Num Iterations", 500));
+
   /// 
   skeleton.addParam(new RichDouble("Repulsion Power", 1.0));
   skeleton.addParam(new RichDouble("Average Power", 2.0));
@@ -260,6 +265,30 @@ void ParameterMgr::initSkeletonParameter()
 	skeleton.addParam(new RichBool("Need To Keep Big Bug", false));
 	skeleton.addParam(new RichDouble("Change Strategy Radius", 0.45));
 	skeleton.addParam(new RichBool("Need Recentering", true));
+}
+void ParameterMgr::loadSkeletonConfigJson(QString filename){
+	std::ifstream file(filename.toStdString());
+	json data = json::parse(file);
+	for (json::iterator it = data.begin(); it != data.end(); ++it) {
+		QString key = QString::fromStdString(it.key());
+		if (global_paraMgr.skeleton.hasParameter(key)) {
+			RichParameter* param = global_paraMgr.skeleton.findParameter(key);
+			Value* old_value = param -> val;
+			if (old_value->isBool()) {
+				global_paraMgr.skeleton.setValue(key, BoolValue(it.value().get<bool>()));
+			} else if (old_value->isInt()) {
+				global_paraMgr.skeleton.setValue(key, IntValue(it.value().get<int>()));
+			} else if (old_value->isDouble()) {
+				global_paraMgr.skeleton.setValue(key, DoubleValue(it.value().get<double>()));
+			} else if (old_value->isString()) {
+				global_paraMgr.skeleton.setValue(key, StringValue(
+					QString::fromStdString(it.value().get<std::string>())
+				));
+			}
+		} else {
+			std::cout << "invalid skeleton config key " << it.key() << std::endl;
+		}
+	}
 }
 
 void ParameterMgr::initNormalSmootherParameter()

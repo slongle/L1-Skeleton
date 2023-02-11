@@ -266,27 +266,41 @@ void ParameterMgr::initSkeletonParameter()
 	skeleton.addParam(new RichDouble("Change Strategy Radius", 0.45));
 	skeleton.addParam(new RichBool("Need Recentering", true));
 }
-void ParameterMgr::loadSkeletonConfigJson(QString filename){
+void ParameterMgr::loadJsonConfig(QString filename){
 	std::ifstream file(filename.toStdString());
-	json data = json::parse(file);
-	for (json::iterator it = data.begin(); it != data.end(); ++it) {
-		QString key = QString::fromStdString(it.key());
-		if (global_paraMgr.skeleton.hasParameter(key)) {
-			RichParameter* param = global_paraMgr.skeleton.findParameter(key);
-			Value* old_value = param -> val;
-			if (old_value->isBool()) {
-				global_paraMgr.skeleton.setValue(key, BoolValue(it.value().get<bool>()));
-			} else if (old_value->isInt()) {
-				global_paraMgr.skeleton.setValue(key, IntValue(it.value().get<int>()));
-			} else if (old_value->isDouble()) {
-				global_paraMgr.skeleton.setValue(key, DoubleValue(it.value().get<double>()));
-			} else if (old_value->isString()) {
-				global_paraMgr.skeleton.setValue(key, StringValue(
-					QString::fromStdString(it.value().get<std::string>())
-				));
-			}
+	json json_data = json::parse(file);
+	for (json::iterator outer_it = json_data.begin(); outer_it != json_data.end(); ++outer_it) {
+		std::string parameterSetName = outer_it.key();
+		RichParameterSet* parameterSet;
+		// if equal to skeleton
+		if (parameterSetName == "skeleton"){
+			parameterSet = &skeleton;
+		} else if (parameterSetName == "data") {
+			parameterSet = &data;
 		} else {
-			std::cout << "invalid skeleton config key " << it.key() << std::endl;
+			std::cout << "parameter set " << parameterSetName << " not found" << std::endl;
+			continue;
+		}
+
+		for (json::iterator inner_it = outer_it.value().begin(); inner_it != outer_it.value().end(); ++inner_it) {
+			QString key = QString::fromStdString(inner_it.key());
+			if (parameterSet->hasParameter(key)) {
+				RichParameter* param = parameterSet->findParameter(key);
+				Value* old_value = param -> val;
+				if (old_value->isBool()) {
+					parameterSet->setValue(key, BoolValue(inner_it.value().get<bool>()));
+				} else if (old_value->isInt()) {
+					parameterSet->setValue(key, IntValue(inner_it.value().get<int>()));
+				} else if (old_value->isDouble()) {
+					parameterSet->setValue(key, DoubleValue(inner_it.value().get<double>()));
+				} else if (old_value->isString()) {
+					parameterSet->setValue(key, StringValue(
+						QString::fromStdString(inner_it.value().get<std::string>())
+					));
+				}
+			} else {
+				std::cout << "invalid skeleton config key " << inner_it.key() << std::endl;
+			}
 		}
 	}
 }

@@ -32,7 +32,7 @@ private:
 	void initUpsamplingParameter();
 
 public:
-	void loadSkeletonConfigJson(QString filename);
+	void loadJsonConfig(QString filename);
 	RichParameterSet glarea;
 	RichParameterSet data;
 	RichParameterSet drawer;

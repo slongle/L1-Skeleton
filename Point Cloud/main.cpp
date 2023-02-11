@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     if (argc != 4) {
       cout << "Usage: " << argv[0] << " input.ply output.skel config.json" << endl;
     } else {
-      global_paraMgr.loadSkeletonConfigJson(argv[3]);
+      global_paraMgr.loadJsonConfig(argv[3]);
       DataMgr *dataMgr = new DataMgr(global_paraMgr.getDataParameterSet());
       dataMgr->loadPlyToOriginal(argv[1]);
       dataMgr->downSamplesByNum(true); // do nondeterministic downsampling

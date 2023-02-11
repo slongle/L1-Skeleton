@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(PointCloudL1)
-list(APPEND CMAKE_MODULE_PATH "/home/jason/projects/l1/L1-Skeleton/Point Cloud/depends/VCG/linux/Cmake")
+list(APPEND CMAKE_MODULE_PATH "/home/jason/projects/l1/L1-Skeleton/PointCloud/depends/VCG/linux/Cmake")
 set(OpenGL_GL_PREFERENCE LEGACY)
 ADD_SUBDIRECTORY(depends/json)
 

@@ -6,7 +6,7 @@ import numpy as np
 import open3d as o3d
 
 TMP_DIR = "/tmp"
-BIN_PATH = "/home/jason/projects/l1/L1-Skeleton/PointCloud/PointCloudL1"
+BIN_PATH = "pointcloudl1.sh"
 DEFAULT_JSON_CONFIG_PATH = (
     "/home/jason/projects/l1/L1-Skeleton/default_skeleton_config.json"
 )

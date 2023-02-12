@@ -16,8 +16,8 @@ RUN apt install -y libglew-dev freeglut3-dev libeigen3-dev libann-dev
 RUN git clone https://github.com/jasonkena/L1-Skeleton.git /home/L1-Skeleton
 WORKDIR /home/L1-Skeleton
 RUN git submodule update --init --recursive
-# switch to test branch
-RUN git checkout test
+RUN git reset --hard e0452579b7945ccd8407e70eb11703e4b3eca612
+
 WORKDIR /home/L1-Skeleton/PointCloud/depends/ANN
 RUN wget https://github.com/jasonkena/L1-Skeleton/files/10715019/ann_1.1.2.zip
 RUN unzip ann_1.1.2.zip

@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 PROJECT(PointCloudL1)
-list(APPEND CMAKE_MODULE_PATH "/home/jason/projects/l1/L1-Skeleton/PointCloud/depends/VCG/linux/Cmake")
+
+set(ANN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/depends/ANN")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/depends/VCG")
+
 set(OpenGL_GL_PREFERENCE LEGACY)
 ADD_SUBDIRECTORY(depends/json)
 
-FIND_PACKAGE(Qt4 REQUIRED)	# find and setup Qt4 for this project
+FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Core Gui Widgets)	# find and setup Qt5 for this project
 FIND_PACKAGE(ANN REQUIRED)
 FIND_PACKAGE(VCG REQUIRED)
 FIND_PACKAGE(GLEW REQUIRED)
@@ -97,6 +100,7 @@ SOURCE_GROUP("UI\\" FILES ${SOURCE_UI})
 SOURCE_GROUP("UI\\" FILES ${HEADER_UI})
 
 add_executable(PointCloudL1 main.cpp ${QT_MAINWINDOWSL_SRCS}  ${SOURCE_ALGO} ${SRC_ADD} 
-										${SOURCE_UI} ${UISrcs} ${MOCSrcs} ${QT_MAINWINDOWSL_CABEZ} 
-										${HEADER_ALGO} ${HDR_ADD} ${HEADER_UI} ${QRC_SRC_FILES})
-									     target_link_libraries(PointCloudL1 ${QT_LIBRARIES} ${ANN_LIBS_MD} ${GLUT_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} nlohmann_json::nlohmann_json)
+   ${SOURCE_UI} ${UISrcs} ${MOCSrcs} ${QT_MAINWINDOWSL_CABEZ} 
+   ${HEADER_ALGO} ${HDR_ADD} ${HEADER_UI} ${QRC_SRC_FILES})
+
+target_link_libraries(PointCloudL1 $${ANN_LIBS_MD} ${GLUT_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} PRIVATE {QT_LIBRARIES} nlohmann_json::nlohmann_json)

@@ -1,17 +1,16 @@
-
 # Extract the directory where *this* file has been installed (determined at cmake run-time)
-get_filename_component(GLEW_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(ANN_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # Get the absolute path with no ../.. relative marks, to eliminate implicit linker warnings
-get_filename_component(GLEW_INSTALL_PATH "${GLEW_CONFIG_PATH}/../.." REALPATH)
+get_filename_component(ANN_INSTALL_PATH "${ANN_CONFIG_PATH}/../.." REALPATH)
 
 # ======================================================
 # Include directories to add to the user project:
 # ======================================================
 
 # Provide the include directories to the caller
-SET(GLEW_INCLUDE_DIRS "${GLEW_CONFIG_PATH}/include")
-INCLUDE_DIRECTORIES(${GLEW_INCLUDE_DIRS})
+SET(ANN_INCLUDE_DIRS "${ANN_CONFIG_PATH}/ann/include")
+INCLUDE_DIRECTORIES(${ANN_INCLUDE_DIRS})
 
 # ======================================================
 # Link directories to add to the user project:
@@ -20,39 +19,40 @@ INCLUDE_DIRECTORIES(${GLEW_INCLUDE_DIRS})
 # Provide the libs directory anyway, it may be needed in some cases.
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    MESSAGE( "64 bits compiler detected" )
+    MESSAGE( "ANN:64! bits compiler detected" )
     SET( EX_PLATFORM 64 )
     SET( EX_PLATFORM_NAME "x64" )
-	SET(GLEW_LIB_DIR "${GLEW_CONFIG_PATH}/lib/release/x64")
-	LINK_DIRECTORIES(${GLEW_LIB_DIR})
+	SET(ANN_LIB_DIR "${ANN_CONFIG_PATH}/lib/Release/")
+	LINK_DIRECTORIES(${ANN_LIB_DIR})
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
-    MESSAGE( "32 bits compiler detected" )
+    MESSAGE( "ANN:32 bits compiler detected" )
     SET( EX_PLATFORM 32 )
     SET( EX_PLATFORM_NAME "x86" )
-	SET(GLEW_LIB_DIR "${GLEW_CONFIG_PATH}/lib/release/Win32")
-	LINK_DIRECTORIES(${GLEW_LIB_DIR})
+	SET(ANN_LIB_DIR "${ANN_CONFIG_PATH}/lib/Release/")
+	LINK_DIRECTORIES(${ANN_LIB_DIR})
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-SET(GLEW_LIB_COMPONENTS glew32)
+SET(ANN_LIB_COMPONENTS_MD ann)
 
-SET(GLEW_LIBS "")
-if(WIN32)
-  foreach(__LIBGLEW ${GLEW_LIB_COMPONENTS})
+SET(ANN_LIBS_MD "")
+if(UNIX)
+  foreach(__LIBANN ${ANN_LIB_COMPONENTS_MD})
       # CMake>=2.6 supports the notation "debug XXd optimized XX"
       if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.4)     
-		  SET(GLEW_LIBS ${GLEW_LIBS} debug ${__LIBGLEW} optimized ${__LIBGLEW})
+		  SET(ANN_LIBS_MD ${ANN_LIBS_MD} debug ${__LIBANN} optimized ${__LIBANN})
       else()
           # Old CMake:
-          SET(GLEW_LIBS ${GLEW_LIBS} ${__LIBGLEW})
+          SET(ANN_LIBS_MD ${ANN_LIBS_MD} ${__LIBANN})
       endif()
   endforeach()
+  
  endif()
 
 # ======================================================
 #  Version variables:
 # ======================================================
-SET(LIBGLEW_VERSION 1.13.0)
-SET(LIBGLEW_VERSION_MAJOR  1)
-SET(LIBGLEW_VERSION_MINOR  13)
-SET(LIBGLEW_VERSION_PATCH  0)
+SET(LIBFREEGLUT_VERSION 1.1.2)
+SET(LIBFREEGLUT_VERSION_MAJOR  1)
+SET(LIBFREEGLUT_VERSION_MINOR  1)
+SET(LIBFREEGLUT_VERSION_PATCH  2)
 

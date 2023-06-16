@@ -9,7 +9,7 @@ This repo implements a compatibility wrapper for the [L1-Skeletonization](http:/
 ```
 docker build -t pointcloudl1 - < Dockerfile
 ```
-- The program can be run interactively/graphically by forwarding a X-Server socket into the container (run the `PointCloudL1` binary with no flags)
+- The program can be run interactively/graphically by forwarding a X-Server socket into the container (run the `PointCloudL1` binary with no flags); see https://github.com/jasonkena/L1-Skeleton/issues/3#issuecomment-1594384924
 ### CLI
 - Generate the `.skel` file for any _isotropic_ `.ply` by running
 ```

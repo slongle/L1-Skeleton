@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 PROJECT(PointCloudL1)
 
 set(ANN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/depends/ANN")
@@ -107,3 +107,18 @@ add_executable(PointCloudL1 main.cpp ${QT_MAINWINDOWSL_SRCS}  ${SOURCE_ALGO} ${S
    ${HEADER_ALGO} ${HDR_ADD} ${HEADER_UI} ${QRC_SRC_FILES})
 
 target_link_libraries(PointCloudL1 ${ANN_LIBS_MD} ${GLUT_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${QT_LIBRARIES} nlohmann_json::nlohmann_json Eigen3::Eigen)
+
+
+
+add_executable(fakegui fakegui.cpp ${QT_MAINWINDOWSL_SRCS}  ${SOURCE_ALGO} ${SRC_ADD} 
+   ${SOURCE_UI} ${UISrcs} ${MOCSrcs} ${QT_MAINWINDOWSL_CABEZ} 
+   ${HEADER_ALGO} ${HDR_ADD} ${HEADER_UI} ${QRC_SRC_FILES})
+
+target_link_libraries(fakegui ${ANN_LIBS_MD} ${GLUT_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${QT_LIBRARIES} nlohmann_json::nlohmann_json Eigen3::Eigen)
+
+if ( CMAKE_COMPILER_IS_GNUCC )
+    target_compile_options(fakegui PRIVATE -Wall -Wextra)
+endif()
+if ( MSVC )
+    target_compile_options(fakegui PRIVATE /W4)
+endif()
